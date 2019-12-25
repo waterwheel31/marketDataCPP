@@ -2,7 +2,7 @@
 #include <thread>
 #include <vector> 
 #include <string> 
-#include "symbol.h"
+#include "Symbol.h"
 
 
 int main(){
@@ -11,10 +11,9 @@ int main(){
     std::string name1 = "USD";
     std::string name2 = "JPY";
 
-    //Currency USDJPY(name1, name2);
-    Currency usdjpy;
+    Currency usdjpy(name1, name2);
 
-    std::cout << usdjpy.getName() << "\n"; 
+    std::cout << "name: " << usdjpy.getName() << "\n"; 
 
     return 0;
 
