@@ -1,19 +1,10 @@
 #include <iostream>
 #include <string> 
 #include <thread>
-#include <fstream>
-#include <cstdlib>
-#include <fstream>
-#include <sstream>
-
+#include <random>  
+#include <vector>
 
 #include <curl/curl.h> 
-#include <jsoncpp/json/json.h>
-#include <jsoncpp/json/value.h>
-#include <jsoncpp/json/reader.h>
-
-#include <jsoncpp/json/forwards.h>
-
 #include "Symbol.h"
 
 std::string API = std::getenv("AlphaAPI");
@@ -22,23 +13,36 @@ Currency::Currency(std::string name1, std::string name2){
     _name1 = name1;
     _name2 = name2;
 
-    runProcess();
+   
+    initiate();
+    
 }
 
 Currency::~Currency(){
-
 }
 
 std::string Currency::getName(){
     return _name1 + _name2; 
 }
 
-void Currency::runProcess(){
+void Currency::initiate(){
+    std::cout << "intiate()" << std::endl;
+    std::thread t1(&Currency::runProcess, this);
+    //std::thread t([]{std::cout << "thread" << std::endl;});
+    // std::thread t(runProcess);
+    // threads.push_back(std::thread(&Currency::runProcess, this));
 
+}
+
+
+void Currency::runProcess(){
+    std::cout << "run process" << std::endl; 
+    /*
     while(true){
         updatePrice();
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000*30));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000*1));
     }
+    */
     
 }
 
@@ -47,9 +51,11 @@ void Currency::updatePrice(){
     CURL *curl;
     CURLcode res;
 
+    float newbid, newask; 
+    
     std::string url = "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=BTC&to_currency=CNY&apikey=" + API; 
 
-
+    /*
     curl = curl_easy_init();
     if(curl){
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
@@ -75,4 +81,16 @@ void Currency::updatePrice(){
         curl_easy_cleanup(curl);
 
     }
+    */
+    std::random_device rd; 
+    newbid = 100.0 + rd() % 10 ;   // dummy 
+    newask = newbid + rd() %10 /10.0 ; 
+
+    if(_bid != newbid || _ask != newask){
+        std::cout << "priced changed " << "ask:" << _ask << " bid:" << _bid <<  std::endl; 
+    }
+
+   _bid = newbid;
+   _ask = newask;
+
 }

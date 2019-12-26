@@ -15,6 +15,8 @@ int main(){
 
     std::cout << "name: " << usdjpy.getName() << "\n"; 
 
+    
+
     return 0;
 
 }

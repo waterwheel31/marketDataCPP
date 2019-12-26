@@ -5,6 +5,8 @@
 #include <string> 
 #include <mutex>
 #include <deque>
+#include <thread>
+#include <vector>
 #include <condition_variable>
 
 enum sideType {ask, bid};
@@ -24,6 +26,7 @@ class Currency {
 
         float getPrice(sideType);
         std::string getName();
+        void initiate();
 
     private: 
         float _bid; 
@@ -33,6 +36,9 @@ class Currency {
         std::string _name2;
         void runProcess();
         void updatePrice();
+        std::vector<std::thread> threads;
+    protected:
+        
 };
 
 #endif
