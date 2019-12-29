@@ -10,10 +10,15 @@
 
 
 std::string MessageQueue::receive(){
+    std::cout <<  "step 1" << std::endl;
     std::unique_lock<std::mutex> uLock(_mtx);
+    std::cout <<  "step 2" << std::endl;
     _cond.wait(uLock, [this] { return !_queue.empty(); });
+     std::cout <<  "step 3" << std::endl;
     std::string msg = std::move(_queue.back());    
+     std::cout <<  "step 4" << std::endl;
     _queue.pop_back();
+     std::cout <<  "step 5" << std::endl;
     return msg;
 }
 void MessageQueue::send(std::string &&msg){
@@ -32,8 +37,9 @@ Symbol::~Symbol(){}
 
 
 std::string Symbol::showQueue(){
+    std::cout << "showQueue() before " <<std::endl;
     auto message = _queue->receive();
-    std::cout << "showQueue()" <<std::endl;
+    std::cout << "showQueue() after" <<std::endl;
     return message;
 }
   

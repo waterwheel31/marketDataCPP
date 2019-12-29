@@ -9,6 +9,7 @@
 #include <condition_variable>
 
 #include "Currency.h"
+#include "Symbol.h"
 
 
 Currency::Currency(std::string name1, std::string name2){
@@ -35,11 +36,12 @@ void Currency::runProcess(){
         _ask = 100;
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         std::unique_lock<std::mutex> lck(_mtx);
-        std::cout <<  _name1 + _name2 << ": " << _ask << std::endl;
+        // std::cout <<  _name1 + _name2 << ": " << _ask << std::endl;
 
         std::string  message = _name1 + _name2 + ": " ; 
         auto is_sent = std::async(std::launch::async, &MessageQueue::send, _queue, std::move(message));
         is_sent.wait();
+        //std::cout <<"message sent" << std::endl;
 
         lck.unlock();
     }

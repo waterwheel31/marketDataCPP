@@ -23,7 +23,7 @@ int main(){
     usdjpy.initiate();
     eurjpy.initiate();
 
-    
+    //std::thread t1(symbol.showQueue());
 
     while (true){
         //auto text = usdjpy._queue->receive();
