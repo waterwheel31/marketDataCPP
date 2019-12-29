@@ -9,35 +9,35 @@
 #include <vector>
 #include <condition_variable>
 
-enum sideType {ask, bid};
+class MessageQueue {
+    public: 
+        std::string receive();
+        void send(std::string &&msg);
+    private: 
+        std::mutex _mtx;
+        std::condition_variable _cond;
+        std::deque<std::string> _queue; 
+
+};
 
 
-
-class Currency {
+class Symbol {
 
     public:
         // Currency(std::string name1, std::string name2);   // constructor
-        Currency(std::string name1, std::string name2);
-        ~Currency();  // deconstructor
-        Currency(const Currency &source);  // copy constructor
-        Currency(const Currency &&source); // move constractor
-        Currency &operator=(const Currency &source);  // assignment operator
-        Currency &operator=(const Currency &&source);  // move assignment operator 
-
-        float getPrice(sideType);
-        std::string getName();
-        void initiate();
+        Symbol();
+        ~Symbol();  // deconstructor
+      
+        std::vector<std::thread> threads;
+        static std::mutex _mtx;           // mutex shared by all traffic objects for protecting cout 
+        std::string showQueue();
 
     private: 
-        float _bid; 
-        float _ask;
-
-        std::string _name1;
-        std::string _name2;
-        void runProcess();
-        void updatePrice();
-        std::vector<std::thread> threads;
+        //std::shared_ptr<MessageQueue> _queue
+       
+       
     protected:
+        std::shared_ptr<MessageQueue> _queue;
         
 };
 

@@ -7,90 +7,33 @@
 #include <curl/curl.h> 
 #include "Symbol.h"
 
-std::string API = std::getenv("AlphaAPI");
 
-Currency::Currency(std::string name1, std::string name2){
-    _name1 = name1;
-    _name2 = name2;
 
-   
-    initiate();
-    
+std::string MessageQueue::receive(){
+    std::unique_lock<std::mutex> uLock(_mtx);
+    _cond.wait(uLock, [this] { return !_queue.empty(); });
+    std::string msg = std::move(_queue.back());    
+    _queue.pop_back();
+    return msg;
 }
-
-Currency::~Currency(){
-}
-
-std::string Currency::getName(){
-    return _name1 + _name2; 
-}
-
-void Currency::initiate(){
-    std::cout << "intiate()" << std::endl;
-    std::thread t1(&Currency::runProcess, this);
-    //std::thread t([]{std::cout << "thread" << std::endl;});
-    // std::thread t(runProcess);
-    // threads.push_back(std::thread(&Currency::runProcess, this));
+void MessageQueue::send(std::string &&msg){
+    std::lock_guard<std::mutex> uLock(_mtx);
+    _queue.push_back(std::move(msg));
+    _cond.notify_one();
 
 }
 
+std::mutex Symbol::_mtx;
 
-void Currency::runProcess(){
-    std::cout << "run process" << std::endl; 
-    /*
-    while(true){
-        updatePrice();
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000*1));
-    }
-    */
-    
+Symbol::Symbol(){
+    _queue = std::make_shared<MessageQueue>();
+}   
+Symbol::~Symbol(){}   
+
+
+std::string Symbol::showQueue(){
+    auto message = _queue->receive();
+    std::cout << "showQueue()" <<std::endl;
+    return message;
 }
-
-void Currency::updatePrice(){
-    //std::cout << "updating the price \n"; 
-    CURL *curl;
-    CURLcode res;
-
-    float newbid, newask; 
-    
-    std::string url = "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=BTC&to_currency=CNY&apikey=" + API; 
-
-    /*
-    curl = curl_easy_init();
-    if(curl){
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-        res = curl_easy_perform(curl);
-        int httpCode = 0;
-        //Json::Reader jsonReader; 
-        //Json::Value jsonData;
-        //std::unique_ptr<std::string> httpData(new std::string());
-        //curl_easy_setopt(curl, CURLOPT_WRITEDATA, httpData.get());
-        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &httpCode);
-
-        if(res != CURLE_OK){
-            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-        }
-        if (httpCode ==200){  
-            
-                std::string rString; 
-                std::cout << res << std::endl; 
-            
-
-        }
-        curl_easy_cleanup(curl);
-
-    }
-    */
-    std::random_device rd; 
-    newbid = 100.0 + rd() % 10 ;   // dummy 
-    newask = newbid + rd() %10 /10.0 ; 
-
-    if(_bid != newbid || _ask != newask){
-        std::cout << "priced changed " << "ask:" << _ask << " bid:" << _bid <<  std::endl; 
-    }
-
-   _bid = newbid;
-   _ask = newask;
-
-}
+  
