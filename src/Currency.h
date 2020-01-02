@@ -14,8 +14,6 @@
 
 enum sideType {ask, bid};
 
-
-
 class Currency: public Symbol, public std::enable_shared_from_this<Currency> {
 
     public:

@@ -33,13 +33,13 @@ void Currency::initiate(){
 
 void Currency::runProcess(){
     while(true){
-        _ask = 100;
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        _ask++;
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         std::unique_lock<std::mutex> lck(_mtx);
         // std::cout <<  _name1 + _name2 << ": " << _ask << std::endl;
 
-        std::string  message = _name1 + _name2 + ": " ; 
-        auto is_sent = std::async(std::launch::async, &MessageQueue::send, _queue, std::move(message));
+        std::string  message = _name1 + _name2 + ": " + std::to_string(_ask); 
+        auto is_sent = std::async(std::launch::async, &MessageQueue::send, _queueSYM, std::move(message));
         is_sent.wait();
         //std::cout <<"message sent" << std::endl;
 
