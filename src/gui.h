@@ -2,18 +2,22 @@
 #define GUI_H_
 
 #include <wx/wx.h>
+#include <wx/listbox.h>
 #include <memory>
 #include "Symbol.h"
 
 
-class PriceItem : public wxPanel
+class PricePanel : public wxPanel
 {
     private: 
         wxStaticText *_text1;
         wxStaticText *_text2;
+        wxTextCtrl *_priceText1;
+        wxTextCtrl *_priceText2;
+
     public: 
-        PriceItem(wxFrame *parent, wxString text);
-        void setText(wxFrame *parent, wxString text);
+        PricePanel(wxFrame *parent, wxString text);
+        void SetText(wxFrame *parent, wxString text);
 };
 
 // frame containing all control elements
@@ -25,12 +29,16 @@ class PriceFrame : public wxFrame
 
         // events
         void OnEnter(wxCommandEvent &WXUNUSED(event));
+        Symbol _symbol; 
  
     public:
         // constructor / desctructor
        PriceFrame(const wxString &title);
-       PriceItem *priceItem;
+       PricePanel *pricePanel;
        void run(Symbol &symbol);
+       void OnQuit(wxCommandEvent &event);
+       void OnListBoxSelect(wxCommandEvent &event);
+       DECLARE_EVENT_TABLE()
 };
 
 // wxWidgets app that hides main()
