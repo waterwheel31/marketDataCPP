@@ -10,14 +10,24 @@
 class PricePanel : public wxPanel
 {
     private: 
+        wxBitmap _image;
+
+    public: 
+        float _price1;
+        float _price2;
         wxStaticText *_text1;
         wxStaticText *_text2;
         wxTextCtrl *_priceText1;
         wxTextCtrl *_priceText2;
+        
+        PricePanel(wxFrame *parent);
+        void SetText(PricePanel *panel, wxString text);
 
-    public: 
-        PricePanel(wxFrame *parent, wxString text);
-        void SetText(wxFrame *parent, wxString text);
+        void paintEvent(wxPaintEvent &evt);
+        void paintNow();
+        void render(wxDC &dc);
+
+        DECLARE_EVENT_TABLE()
 };
 
 // frame containing all control elements
@@ -40,6 +50,9 @@ class PriceFrame : public wxFrame
        void OnListBoxSelect(wxCommandEvent &event);
        DECLARE_EVENT_TABLE()
 };
+
+
+
 
 // wxWidgets app that hides main()
 class PriceApp : public wxApp

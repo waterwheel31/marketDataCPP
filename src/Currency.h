@@ -14,11 +14,11 @@
 
 enum sideType {ask, bid};
 
-class Currency: public Symbol, public std::enable_shared_from_this<Currency> {
+class Currency: public Symbol {
 
     public:
         // Currency(std::string name1, std::string name2);   // constructor
-        Currency(std::string name1, std::string name2);
+        Currency(const std::string name1, const std::string name2);
         ~Currency();  // deconstructor
         Currency(const Currency &source);  // copy constructor
         Currency(const Currency &&source); // move constractor
@@ -30,9 +30,6 @@ class Currency: public Symbol, public std::enable_shared_from_this<Currency> {
         void initiate();
         void runProcess();
 
-        std::shared_ptr<Currency> get_shared_this() { return shared_from_this(); }
-
-       
     private: 
         float _bid; 
         float _ask;

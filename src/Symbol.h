@@ -26,14 +26,18 @@ class Symbol {
         // Currency(std::string name1, std::string name2);   // constructor
         Symbol();
         ~Symbol();  // deconstructor     
+
+        std::string getName();
+
         std::vector<std::thread> threads;
         static std::mutex _mtx;           // mutex shared by all traffic objects for protecting cout 
         std::string showQueue();
         void setShared(std::shared_ptr<MessageQueue> msq);
         std::shared_ptr<MessageQueue> _queueSYM;
     private: 
-        //std::shared_ptr<MessageQueue> _queue    
-    protected:            
+        
+    protected: 
+        std::string _name;             
 };
 
 #endif

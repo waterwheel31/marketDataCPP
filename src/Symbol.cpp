@@ -47,3 +47,6 @@ void Symbol::setShared(std::shared_ptr<MessageQueue> msq){
     _queueSYM = msq;
 }
   
+std::string Symbol::getName(){
+    return _name; 
+}

@@ -1,95 +1,97 @@
 #include <wx/filename.h>
 #include <wx/colour.h>
 #include <wx/image.h>
-
+#include <iostream>
 #include <thread>
 #include <vector> 
 #include <string> 
 #include "Currency.h"
 #include "Symbol.h"
 #include "gui.h"
+#include <unistd.h>
 
 const int width = 300;
-const int height = 300;
+const int height = 350;
 const int ID_Quit = 1;
 const int ListBoxID = 1;
 
 IMPLEMENT_APP(PriceApp);
 
-
+std::string dataPath = "../";
+std::string imgBasePath = dataPath + "images/";
 
 bool PriceApp::OnInit()
 {
-    // create window with name and show it
-    std::cout << "ChatBotApp::OnInit() \n";
-    
-    //wxButton *button = new wxButton(_("Button"), wxSize(250, 100));
-    //button->Show();
-
-    Symbol symbol;
-
-    PriceFrame *priceFrame = new PriceFrame(wxT("Market Watcher"));
+    // Create main window frame    
+    PriceFrame *priceFrame = new PriceFrame(wxT("Simple Market Watcher"));
     priceFrame->Show(true);
-
-    std::string name1 = "USD";
-    std::string name2 = "JPY";
-    std::string name3 = "EUR";
-    
-    Currency *usdjpy = new Currency(name1, name2);
-    Currency *eurjpy = new Currency(name3, name2);
-
-    usdjpy->initiate();
-    usdjpy->setShared(symbol._queueSYM);
-    eurjpy->initiate();
-    eurjpy->setShared(symbol._queueSYM);
-
-    //while (true){
-        //std::string msg = symbol.showQueue();
-        //std::cout << "Price Chagned - " << msg <<std::endl;
-        //priceFrame->Show(true);
-    //}
-
+ 
     return true;
 }
 
+
+// Main window frame 
 PriceFrame::PriceFrame(const wxString &title) : 
 wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(width, height))
 {
-    // position window in screen center
-    wxString text = "text";
+    
+    // Prepare symbols
+    Symbol symbol;
+
+    const std::string name1 = "USD";
+    const std::string name2 = "JPY";
+    const std::string name3 = "EUR";
+    const std::string name4 = "BTC";
+    
+    Currency *usdjpy = new Currency(name1, name2);
+    Currency *eurjpy = new Currency(name3, name2);
+    Currency *btcusd = new Currency(name4, name1);
+
+    //Currency usdjpy(name1, name2);
+    //Currency eurjpy(name3, name2);
+    //Currency btcusd(name4, name1);
+
+    usdjpy->initiate();
+    //eurjpy->initiate();
+    //btcusd->initiate();
+    //usdjpy->setShared(symbol._queueSYM);
+    
+    //std::vector<std::shared_ptr<Currency>> curVec; 
+    //curVec.push_back(std::shared_ptr<Currency>(usdjpy));
+    //curVec.push_back(std::shared_ptr<Currency>(eurjpy));
+    //curVec.push_back(std::shared_ptr<Currency>(btcusd));
+   
+
+    // Menu bar
     wxMenu *menu = new wxMenu; 
     menu->Append(ID_Quit, _("E&xit"));
-
     wxMenuBar *menuBar = new wxMenuBar;
     menuBar->Append(menu, ("&File"));
     SetMenuBar(menuBar);
     this->CreateStatusBar();
 
-    PricePanel *pricePanel = new PricePanel(this,text);
+
+    // Create the panel to place items on it 
+    PricePanel *pricePanel = new PricePanel(this);
   
-    //wxPanel *panel = new wxPanel(this, wxID_ANY);
+    // Create an Exit button  
+    /*
     wxButton *button = new wxButton(pricePanel, wxID_EXIT, _("Exit"), wxPoint(25, 30));
     Connect(wxID_EXIT, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PriceFrame::OnQuit));
     button->SetFocus();
+    */
 
+    // Create a list of symbols 
     wxListBox *listBox = new wxListBox(pricePanel, ListBoxID, wxPoint(150,30),wxSize(130, 100));
     Connect(ListBoxID, wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(PriceFrame::OnListBoxSelect));
 
-    listBox->Append("USDJPY");
+    
+    //listBox->Append(usdjpy->getName());
     listBox->Append("EURJPY");
     listBox->Append("BTCUSD");
-    
-    //this->Connect(id,  wxEVT_TEXT_ENTER, wxCommandEventHandler(PriceFrame::OnEnter));
-        
-    //wxBoxSizer *vertBoxSizer = new wxBoxSizer(wxVERTICAL);
-    //vertBoxSizer->AddSpacer(90);
-
-    
 
     this->Centre();
 }
-
-
 
 
 BEGIN_EVENT_TABLE(PriceFrame, wxFrame)
@@ -102,7 +104,7 @@ void PriceFrame::OnQuit(wxCommandEvent &event){
 
 void PriceFrame::OnListBoxSelect(wxCommandEvent &event){
     std::cout << "On List Box Select" << std::endl;
-    pricePanel->SetText(this, "new value");
+    pricePanel->SetText(pricePanel, "new value");
 }
 
 void PriceFrame::run(Symbol &symbol)
@@ -120,10 +122,16 @@ void PriceFrame::OnEnter(wxCommandEvent &WXUNUSED(event))
     //std::cout << "Price Chagned - " << msg <<std::endl;
 }
 
-PricePanel::PricePanel(wxFrame *parent, wxString text) : wxPanel(parent, -1, wxPoint(-1, -1), wxSize(-1, -1), wxBORDER_NONE)
+
+BEGIN_EVENT_TABLE(PricePanel, wxPanel)
+    EVT_PAINT(PricePanel::paintEvent) // catch paint events
+END_EVENT_TABLE()
+
+PricePanel::PricePanel(wxFrame *parent) : 
+wxPanel(parent, -1, wxPoint(-1, -1), wxSize(-1, -1), wxBORDER_NONE)
 {
-    float _price1 = 0;
-    float _price2 = 0; 
+    float _price1 = 1;
+    float _price2 = 2; 
 
     _text1 = new wxStaticText(this, wxID_ANY, "Bid Price:", wxPoint(30, 160), wxSize(100, -1), wxALIGN_CENTRE | wxBORDER_SIMPLE);
     _text2 = new wxStaticText(this, wxID_ANY, "Ask Price:", wxPoint(30, 200), wxSize(100, -1), wxALIGN_CENTRE | wxBORDER_SIMPLE);
@@ -133,10 +141,43 @@ PricePanel::PricePanel(wxFrame *parent, wxString text) : wxPanel(parent, -1, wxP
    
 }
 
-void PricePanel::SetText(wxFrame *parent, wxString text){
-    std::cout << "setText():" << text <<  std::endl;
-    std::cout << "_priceText1:" << this->_priceText1 <<  std::endl;
-    _priceText1->SetValue("text");
+void PricePanel::SetText(PricePanel *panel, wxString text){
+    std::cout << "setText():" << text  <<  std::endl;
+    //_priceText1 = new wxTextCtrl(this, wxID_ANY, text, wxPoint(150, 160), wxSize(130, 20),wxTE_READONLY);
+    //_priceText1->SetValue(text);
     
 }
 
+void PricePanel::paintEvent(wxPaintEvent &evt)
+{
+    wxPaintDC dc(this);
+    render(dc);
+}
+
+void PricePanel::paintNow()
+{
+    wxClientDC dc(this);
+    render(dc);
+}
+
+void PricePanel::render(wxDC &dc)
+{
+    // load backgroud image from file
+    // wxString imgFile = imgBasePath + "cockatiel-4084017_640.jpg";
+    //std::cout << "imgFile:" << imgFile << std::endl;
+    wxImage image;
+    wxInitAllImageHandlers();
+    image.LoadFile(imgBasePath + "background.jpg", wxBITMAP_TYPE_JPEG );
+
+    // rescale image to fit window dimensions
+    wxSize sz = this->GetSize();
+
+    //std::cout << "got size" << std::endl;
+    //std::cout << sz.GetWidth() << "," << sz.GetHeight() << std::endl;
+    
+    wxImage imgSmall = image.Rescale(sz.GetWidth(), sz.GetHeight(), wxIMAGE_QUALITY_HIGH);
+    _image = wxBitmap(imgSmall);
+
+    dc.DrawBitmap(_image, 0, 0, false);
+
+}
