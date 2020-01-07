@@ -13,7 +13,8 @@
 const int width = 300;
 const int height = 350;
 const int ID_Quit = 1;
-const int ListBoxID = 1;
+const int ListBoxID = 2;
+const int PanelID = 3;
 
 IMPLEMENT_APP(PriceApp);
 
@@ -29,6 +30,12 @@ bool PriceApp::OnInit()
     return true;
 }
 
+
+
+BEGIN_EVENT_TABLE(PriceFrame, wxFrame)
+    EVT_MENU(ID_Quit, PriceFrame::OnQuit)
+    EVT_LISTBOX(ListBoxID, PriceFrame::OnListBoxSelect)
+END_EVENT_TABLE()
 
 // Main window frame 
 PriceFrame::PriceFrame(const wxString &title) : 
@@ -70,9 +77,13 @@ wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(width, height))
     SetMenuBar(menuBar);
     this->CreateStatusBar();
 
-
     // Create the panel to place items on it 
     PricePanel *pricePanel = new PricePanel(this);
+    //PricePanel pricePanel(this);
+
+
+    pricePanel->SetText(pricePanel, "test value");
+    //pricePanel.SetText(pricePanel, "test value");
   
     // Create an Exit button  
     /*
@@ -83,9 +94,8 @@ wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(width, height))
 
     // Create a list of symbols 
     wxListBox *listBox = new wxListBox(pricePanel, ListBoxID, wxPoint(150,30),wxSize(130, 100));
-    Connect(ListBoxID, wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(PriceFrame::OnListBoxSelect));
+    this->Connect(ListBoxID, wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(PriceFrame::OnListBoxSelect));
 
-    
     //listBox->Append(usdjpy->getName());
     listBox->Append("EURJPY");
     listBox->Append("BTCUSD");
@@ -93,18 +103,13 @@ wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(width, height))
     this->Centre();
 }
 
-
-BEGIN_EVENT_TABLE(PriceFrame, wxFrame)
-    EVT_MENU(ID_Quit, PriceFrame::OnQuit)
-END_EVENT_TABLE()
-
 void PriceFrame::OnQuit(wxCommandEvent &event){
     Close(true);
 }
 
 void PriceFrame::OnListBoxSelect(wxCommandEvent &event){
     std::cout << "On List Box Select" << std::endl;
-    pricePanel->SetText(pricePanel, "new value");
+    this->pricePanel->SetText(pricePanel, "new value");
 }
 
 void PriceFrame::run(Symbol &symbol)
@@ -130,8 +135,10 @@ END_EVENT_TABLE()
 PricePanel::PricePanel(wxFrame *parent) : 
 wxPanel(parent, -1, wxPoint(-1, -1), wxSize(-1, -1), wxBORDER_NONE)
 {
-    float _price1 = 1;
-    float _price2 = 2; 
+     _price1 = 0.1;
+     _price2 = 0.2; 
+
+    std::cout << "_price1 address: " << &this->_price1  << std::endl;
 
     _text1 = new wxStaticText(this, wxID_ANY, "Bid Price:", wxPoint(30, 160), wxSize(100, -1), wxALIGN_CENTRE | wxBORDER_SIMPLE);
     _text2 = new wxStaticText(this, wxID_ANY, "Ask Price:", wxPoint(30, 200), wxSize(100, -1), wxALIGN_CENTRE | wxBORDER_SIMPLE);
@@ -144,6 +151,9 @@ wxPanel(parent, -1, wxPoint(-1, -1), wxSize(-1, -1), wxBORDER_NONE)
 void PricePanel::SetText(PricePanel *panel, wxString text){
     std::cout << "setText():" << text  <<  std::endl;
     //_priceText1 = new wxTextCtrl(this, wxID_ANY, text, wxPoint(150, 160), wxSize(130, 20),wxTE_READONLY);
+    
+    // std::cout << "_price1 addres: " << &this->_price1 << std::endl; 
+    //std::cout << "_price1 value: " << this->_price1 << std::endl;
     //_priceText1->SetValue(text);
     
 }

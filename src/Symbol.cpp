@@ -26,7 +26,6 @@ void MessageQueue::send(std::string &&msg){
 }
 
 
-
 std::mutex Symbol::_mtx;
 
 Symbol::Symbol(){

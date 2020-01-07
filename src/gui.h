@@ -13,8 +13,8 @@ class PricePanel : public wxPanel
         wxBitmap _image;
 
     public: 
-        float _price1;
-        float _price2;
+        float _price1 = 0;
+        float _price2 = 0;
         wxStaticText *_text1;
         wxStaticText *_text2;
         wxTextCtrl *_priceText1;

@@ -40,7 +40,7 @@ void Currency::initiate(){
     curl = curl_easy_init();
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     //curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &body);
+    // curl_easy_setopt(curl, CURLOPT_WRITEDATA, &body);
     curl_easy_perform(curl);
     int httpCode = 0;
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &httpCode);
@@ -55,9 +55,9 @@ void Currency::initiate(){
         //std::string res_s = std::to_string(res);
         //std::stringstream res_ss(res_s);
 
-        std::cout << body << std::endl;
+        //std::cout << body << std::endl;
 
-        std::string out;
+        //std::string out;
 
         //std::cout << res_s << std::endl;
 
