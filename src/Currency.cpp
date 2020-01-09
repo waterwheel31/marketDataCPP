@@ -33,14 +33,15 @@ void Currency::initiate(){
     
     CURL *curl;
     CURLcode res;
-    std::string body; 
+    std::string *response_string; 
     std::string API = std::getenv("ALPHAAPI");
     std::string url = "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=BTC&to_currency=CNY&apikey=" + API; 
     
     curl = curl_easy_init();
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-    //curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-    // curl_easy_setopt(curl, CURLOPT_WRITEDATA, &body);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, response_string);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+  
     curl_easy_perform(curl);
     int httpCode = 0;
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &httpCode);
@@ -68,17 +69,20 @@ void Currency::initiate(){
             std::cout << "after" << std::endl;
         }
         */
-
-        
         
     }
-    
-
 
     threads.emplace_back(std::thread(&Currency::runProcess, this));
     //_queue = std::make_shared<MessageQueue>();
   
 }
+
+int Currency::write_callback(char *ptr, size_t size, size_t nmemb, void *userdata){
+    std::cout << "call back function" << std::endl;
+    
+    return 0;
+}
+
 
 void Currency::runProcess(){
     while(true){

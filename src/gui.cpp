@@ -78,12 +78,7 @@ wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(width, height))
     this->CreateStatusBar();
 
     // Create the panel to place items on it 
-    PricePanel *pricePanel = new PricePanel(this);
-    //PricePanel pricePanel(this);
-
-
-    pricePanel->SetText(pricePanel, "test value");
-    //pricePanel.SetText(pricePanel, "test value");
+    pricePanel = new PricePanel(this);
   
     // Create an Exit button  
     /*
@@ -138,7 +133,7 @@ wxPanel(parent, -1, wxPoint(-1, -1), wxSize(-1, -1), wxBORDER_NONE)
      _price1 = 0.1;
      _price2 = 0.2; 
 
-    std::cout << "_price1 address: " << &this->_price1  << std::endl;
+    //std::cout << "_price1 address: " << &this->_price1  << std::endl;
 
     _text1 = new wxStaticText(this, wxID_ANY, "Bid Price:", wxPoint(30, 160), wxSize(100, -1), wxALIGN_CENTRE | wxBORDER_SIMPLE);
     _text2 = new wxStaticText(this, wxID_ANY, "Ask Price:", wxPoint(30, 200), wxSize(100, -1), wxALIGN_CENTRE | wxBORDER_SIMPLE);
@@ -152,9 +147,9 @@ void PricePanel::SetText(PricePanel *panel, wxString text){
     std::cout << "setText():" << text  <<  std::endl;
     //_priceText1 = new wxTextCtrl(this, wxID_ANY, text, wxPoint(150, 160), wxSize(130, 20),wxTE_READONLY);
     
-    // std::cout << "_price1 addres: " << &this->_price1 << std::endl; 
-    //std::cout << "_price1 value: " << this->_price1 << std::endl;
-    //_priceText1->SetValue(text);
+    std::cout << "_price1 addres: " << &this->_price1 << std::endl; 
+    std::cout << "_price1 value: " << this->_price1 << std::endl;
+    _priceText1->SetValue(text);
     
 }
 
@@ -173,18 +168,12 @@ void PricePanel::paintNow()
 void PricePanel::render(wxDC &dc)
 {
     // load backgroud image from file
-    // wxString imgFile = imgBasePath + "cockatiel-4084017_640.jpg";
-    //std::cout << "imgFile:" << imgFile << std::endl;
     wxImage image;
     wxInitAllImageHandlers();
     image.LoadFile(imgBasePath + "background.jpg", wxBITMAP_TYPE_JPEG );
 
     // rescale image to fit window dimensions
-    wxSize sz = this->GetSize();
-
-    //std::cout << "got size" << std::endl;
-    //std::cout << sz.GetWidth() << "," << sz.GetHeight() << std::endl;
-    
+    wxSize sz = this->GetSize();    
     wxImage imgSmall = image.Rescale(sz.GetWidth(), sz.GetHeight(), wxIMAGE_QUALITY_HIGH);
     _image = wxBitmap(imgSmall);
 

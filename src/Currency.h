@@ -29,6 +29,8 @@ class Currency: public Symbol {
         std::string getName();
         void initiate();
         void runProcess();
+        static int write_callback(char *ptr, size_t size, size_t nmemb, void *userdata);
+    
 
     private: 
         float _bid; 
