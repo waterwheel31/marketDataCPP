@@ -1,8 +1,12 @@
 # Simple Market Price Watcher
 
+
+
+![Test Image 1](./images/screenshot.png)
+
 ## What is this? 
 
-- sample image 
+
 
 - This is a simple widget to retrive market prices from a website (`Alphavantage.co`)
 - Data is updated through REST API. This is not realtime, and requests prices only periodically (default = every 10 minutes)
