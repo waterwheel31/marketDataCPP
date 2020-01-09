@@ -147,7 +147,7 @@ void PricePanel::SetText(PricePanel *panel, wxString text){
     std::cout << "setText():" << text  <<  std::endl;
     //_priceText1 = new wxTextCtrl(this, wxID_ANY, text, wxPoint(150, 160), wxSize(130, 20),wxTE_READONLY);
     
-    std::cout << "_price1 addres: " << &this->_price1 << std::endl; 
+    //std::cout << "_price1 address: " << &this->_price1 << std::endl; 
     std::cout << "_price1 value: " << this->_price1 << std::endl;
     _priceText1->SetValue(text);
     
