@@ -34,17 +34,15 @@ Currency::~Currency(){
     th.join();
 }
 
-
 void Currency::initiate(){
-    
     std::cout << _name << ": initiated" << std::endl; 
     updatePrice();
     threads.emplace_back(std::thread(&Currency::runProcess, this));
-  
 }
 
+
+// a call back function for CURL 
 int Currency::write_callback(char *ptr, size_t size, size_t nmemb, char *res){
-    std::cout << "call back function" << std::endl;
     
     struct Buffer *buf = (struct Buffer *)res; 
     int block = size * nmemb; 
@@ -54,11 +52,11 @@ int Currency::write_callback(char *ptr, size_t size, size_t nmemb, char *res){
     return 0;
 }
 
+
 void Currency::updatePrice(){
     
     CURL *curl;
     CURLcode code;
-
     struct Buffer *buf;
 
     buf = (struct Buffer *)malloc(sizeof(struct Buffer));
@@ -66,7 +64,6 @@ void Currency::updatePrice(){
     buf->data_size = 0;
 
     std::string API = std::getenv("ALPHAAPI");
-    std::cout << "_name1:" << _name1 << " _name2: " << _name2 << std::endl; 
     std::string url = "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=" + _name1 + "&to_currency=" + _name2 + "&apikey=" + API; 
     //std::cout << url << std::endl; 
     
@@ -112,23 +109,40 @@ void Currency::updatePrice(){
             }
         }
     }
-    std::cout << "ask: " << _ask  << " bid: " << _bid  << std::endl; 
+    // std::cout << "ask: " << _ask  << " bid: " << _bid  << std::endl; 
 }
 
 void Currency::runProcess(){
     while(true){
-        _ask++;
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-        std::unique_lock<std::mutex> lck(_mtx);
+        double ask_old = _ask;
+        double bid_old = _bid; 
 
-        std::string  message = _name1 + _name2 + ": " + std::to_string(_ask); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+        updatePrice();
+
+        if (ask_old != _ask || bid_old != _bid){
+            std::cout << "priced changed: " << _name << std::endl; 
+        }
+
+        
+        std::unique_lock<std::mutex> lck(_mtx);
+        std::string  message = _name  + ": " + std::to_string(_ask) + " : " + std::to_string(_bid) ; 
         auto is_sent = std::async(std::launch::async, &MessageQueue::send, _queueSYM, std::move(message));
         is_sent.wait();
-
         lck.unlock();
+        
     }
 }
 
 std::string Currency::getName(){
-    return _name1 + _name2; 
+    return _name; 
+}
+
+double Currency::getPrice(sideType side){
+    if(side == sideType::ask){ 
+        return _ask; 
+    }
+    if(side == sideType::bid){ 
+        return _bid; 
+    }
 }

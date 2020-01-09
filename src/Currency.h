@@ -25,12 +25,12 @@ class Currency: public Symbol {
         Currency &operator=(const Currency &source);  // assignment operator
         Currency &operator=(const Currency &&source);  // move assignment operator 
 
-        float getPrice(sideType);
+        double  getPrice(sideType side);
         std::string getName();
+
         void initiate();
         void runProcess();
         static int write_callback(char *ptr, size_t size, size_t nmemb, char *res);
-    
 
     private: 
         double _bid; 
@@ -40,10 +40,10 @@ class Currency: public Symbol {
 
         std::string _name1;
         std::string _name2;
+        std::string _name; 
         
         void updatePrice();
-       
-    protected:
+    
         
 };
 
