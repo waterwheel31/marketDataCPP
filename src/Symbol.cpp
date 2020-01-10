@@ -7,7 +7,8 @@
 #include <curl/curl.h> 
 #include "Symbol.h"
 
-std::string MessageQueue::receive(){
+template <class T> 
+T MessageQueue<T>::receive(){
     //std::cout <<  "step 1" << std::endl;
     std::unique_lock<std::mutex> uLock(_mtx);
     //std::cout <<  "step 2" << std::endl;
@@ -19,7 +20,9 @@ std::string MessageQueue::receive(){
     //std::cout <<  "step 5" << std::endl;
     return msg;
 }
-void MessageQueue::send(std::string &&msg){
+
+template <class T> 
+static void MessageQueue<T>::send(T &&msg){
     std::lock_guard<std::mutex> uLock(_mtx);
     _queue.push_back(std::move(msg));
     _cond.notify_one();
@@ -29,7 +32,7 @@ void MessageQueue::send(std::string &&msg){
 std::mutex Symbol::_mtx;
 
 Symbol::Symbol(){
-    _queueSYM = std::make_shared<MessageQueue>();
+    _queueSYM = std::make_shared<MessageQueue<std::string>>();
 }   
 Symbol::~Symbol(){}   
 
@@ -42,7 +45,7 @@ std::string Symbol::showQueue(){
     return message;
 }
 
-void Symbol::setShared(std::shared_ptr<MessageQueue> msq){
+void Symbol::setShared(std::shared_ptr<MessageQueue<std::string>> msq){
     _queueSYM = msq;
 }
   

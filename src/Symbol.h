@@ -9,14 +9,16 @@
 #include <vector>
 #include <condition_variable>
 
+
+template <class T>
 class MessageQueue {
     public: 
-        std::string receive();
-        void send(std::string &&msg);
+        T receive();
+        static void send(T &&msg);
     private: 
         std::mutex _mtx;
         std::condition_variable _cond;
-        std::deque<std::string> _queue; 
+        std::deque<T> _queue; 
 };
 
 
@@ -28,16 +30,16 @@ class Symbol {
         ~Symbol();  // deconstructor     
 
         std::string getName();
+        std::string showQueue();
 
         std::vector<std::thread> threads;
-        static std::mutex _mtx;           // mutex shared by all traffic objects for protecting cout 
-        std::string showQueue();
-        void setShared(std::shared_ptr<MessageQueue> msq);
-        std::shared_ptr<MessageQueue> _queueSYM;
+
     private: 
-        
-    protected: 
-        std::string _name;             
+    
+        void setShared(std::shared_ptr<MessageQueue<std::string>> msq);
+        std::string _name;   
+
+                  
 };
 
 #endif
