@@ -29,7 +29,7 @@ Currency::Currency(const std::string name1, const std::string name2){
     _name1 = name1; 
     _name2 = name2;  
     _name = _name1 + _name2;   
-    _queueSYM = std::make_shared<MessageQueue<std::string>>();
+    _queueSYM = std::make_shared<MessageQueue>();
 }
 
 Currency::~Currency(){
@@ -119,19 +119,19 @@ void Currency::runProcess(){
         double ask_old = _ask;
         double bid_old = _bid; 
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
         updatePrice();
 
         if (ask_old != _ask || bid_old != _bid){
             std::cout << "priced changed: " << _name << std::endl; 
-        }
-
-        std::unique_lock<std::mutex> lck(_mtx);
-        std::string  message = _name  + ": " + std::to_string(_ask) + " : " + std::to_string(_bid) ; 
-        auto is_sent = std::async(std::launch::async, &MessageQueue<std::string>::send, _queueSYM, std::move(message));
-        is_sent.wait();
-        lck.unlock();
         
+            std::unique_lock<std::mutex> lck(_mtx);
+            std::string  message = _name  + ": " + std::to_string(_ask) + " : " + std::to_string(_bid) ; 
+            auto is_sent = std::async(std::launch::async, &MessageQueue::send, _queueSYM, std::move(message));
+            is_sent.wait();
+            std::cout << "message queue sent" << std::endl; 
+            lck.unlock();
+        }
     }
 }
 

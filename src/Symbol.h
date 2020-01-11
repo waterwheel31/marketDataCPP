@@ -10,15 +10,15 @@
 #include <condition_variable>
 
 
-template <class T>
+//template <class T>
 class MessageQueue {
     public: 
-        T receive();
-        void send(T &&msg);
+        std::string receive();
+        void send(std::string &&msg);
     private: 
         std::mutex _mtx;
         std::condition_variable _cond;
-        std::deque<T> _queue; 
+        std::deque<std::string> _queue; 
 };
 
 
@@ -30,13 +30,15 @@ class Symbol {
         ~Symbol();  // deconstructor     
 
         std::string getName();
-        std::string showQueue();
+        void showQueue();
 
         std::vector<std::thread> threads;
+        std::shared_ptr<MessageQueue> _queueSYM;
+        std::thread th; 
 
     private: 
-        std::shared_ptr<MessageQueue<std::string>> _queueSYM;
-        void setShared(std::shared_ptr<MessageQueue<std::string>> msq);
+        
+        void setShared(std::shared_ptr<MessageQueue> msq);
         std::string _name;   
 
                   

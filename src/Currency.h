@@ -32,15 +32,16 @@ class Currency: public Symbol {
         void runProcess();
         static int write_callback(char *ptr, size_t size, size_t nmemb, char *res);
 
-        std::thread th;         
+        std::thread th;     
+        //std::shared_ptr<MessageQueue> _queueSYM;
+    
 
     private: 
         double _bid; 
         double _ask;
 
         std::mutex _mtx;       
-        std::shared_ptr<MessageQueue<std::string>> _queueSYM;
-
+        
         std::string _name1;
         std::string _name2;
         std::string _name; 
