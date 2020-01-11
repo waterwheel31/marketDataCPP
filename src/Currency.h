@@ -38,7 +38,7 @@ class Currency: public Symbol {
         double _bid; 
         double _ask;
 
-        static std::mutex _mtx;       
+        std::mutex _mtx;       
         std::shared_ptr<MessageQueue<std::string>> _queueSYM;
 
         std::string _name1;

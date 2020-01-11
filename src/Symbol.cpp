@@ -22,14 +22,14 @@ T MessageQueue<T>::receive(){
 }
 
 template <class T> 
-static void MessageQueue<T>::send(T &&msg){
+void MessageQueue<T>::send(T &&msg){
     std::lock_guard<std::mutex> uLock(_mtx);
     _queue.push_back(std::move(msg));
     _cond.notify_one();
 }
 
 
-std::mutex Symbol::_mtx;
+//std::mutex Symbol::_mtx;
 
 Symbol::Symbol(){
     _queueSYM = std::make_shared<MessageQueue<std::string>>();

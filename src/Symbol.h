@@ -14,7 +14,7 @@ template <class T>
 class MessageQueue {
     public: 
         T receive();
-        static void send(T &&msg);
+        void send(T &&msg);
     private: 
         std::mutex _mtx;
         std::condition_variable _cond;
@@ -35,7 +35,7 @@ class Symbol {
         std::vector<std::thread> threads;
 
     private: 
-    
+        std::shared_ptr<MessageQueue<std::string>> _queueSYM;
         void setShared(std::shared_ptr<MessageQueue<std::string>> msq);
         std::string _name;   
 
