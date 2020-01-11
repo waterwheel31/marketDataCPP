@@ -84,13 +84,15 @@ void PriceFrame::OnListBoxSelect(wxCommandEvent &event){
     this->pricePanel->SetText(pricePanel, "new value");
 }
 
+/*
 void PriceFrame::run(Symbol &symbol)
 {
     while (true){
-        std::string msg = symbol.showQueue();
+        //std::string msg = symbol.showQueue();
         std::cout << "Price Chagned - " << msg <<std::endl;
     }
 }
+*/
 
 BEGIN_EVENT_TABLE(PricePanel, wxPanel)
     EVT_PAINT(PricePanel::paintEvent) // catch paint events

@@ -15,8 +15,9 @@ class MessageQueue {
     public: 
         std::string receive();
         void send(std::string &&msg);
-    private: 
         std::mutex _mtx;
+    private: 
+        
         std::condition_variable _cond;
         std::deque<std::string> _queue; 
 };
